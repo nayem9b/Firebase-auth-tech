@@ -1,16 +1,18 @@
 import React, { useContext } from "react";
 import GoogleButton from "react-google-button";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "./Contexts/UserContext";
 // import "./Login.css";
 
 const Login = () => {
+  const navigate = useNavigate();
   const { signInWithGoogle, fbSignIn } = useContext(AuthContext);
   const handleGoogleSignIn = () => {
     signInWithGoogle()
       .then((result) => {
         const user = result.user;
         console.log(user);
+        navigate("/");
       })
       .catch((error) => console.error(error));
   };

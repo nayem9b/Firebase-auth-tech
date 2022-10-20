@@ -1,8 +1,17 @@
 import React, { useContext } from "react";
 import GoogleButton from "react-google-button";
 import { AuthContext } from "./Contexts/UserContext";
+import { toast } from "react-toastify";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
+  const handleEmail = (e) => {
+    const test = /\S+@\S+\.\S+/.test(e.target.value);
+    if (!test) {
+      toast.success("Login Success!");
+    }
+  };
   const { signInWithGoogle, createUser, fbSignIn } = useContext(AuthContext);
 
   const handleGoogleSignIn = () => {
@@ -32,6 +41,7 @@ const Register = () => {
         const user = result.user;
         console.log(user);
         form.reset();
+        navigate("/profile");
       })
       .catch((error) => console.error(error));
   };
@@ -61,7 +71,7 @@ const Register = () => {
                     name='user'
                   />
                 </div>
-                <div className='form-control'>
+                <div onBlur={handleEmail} className='form-control'>
                   <label className='label'>
                     <span className='label-text'>Email</span>
                   </label>

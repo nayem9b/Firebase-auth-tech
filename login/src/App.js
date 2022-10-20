@@ -6,6 +6,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Main from "./Components/Main";
 import Register from "./Components/Register";
 import Section from "./Components/Section";
+import Hidden from "./Components/Hidden";
+import PrivateRoute from "./Components/PrivateRoute";
+import Profile from "./Components/Profile";
 
 function App() {
   const router = createBrowserRouter([
@@ -28,6 +31,23 @@ function App() {
         {
           path: "/register",
           element: <Register></Register>,
+        },
+        {
+          path: "/profile",
+          element: (
+            <PrivateRoute>
+              {" "}
+              <Profile></Profile>
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: "/hidden",
+          element: (
+            <PrivateRoute>
+              <Hidden></Hidden>
+            </PrivateRoute>
+          ),
         },
       ],
     },
