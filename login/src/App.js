@@ -9,6 +9,7 @@ import Section from "./Components/Section";
 import Hidden from "./Components/Hidden";
 import PrivateRoute from "./Components/PrivateRoute";
 import Profile from "./Components/Profile";
+import Varified from "./Components/Varified";
 
 function App() {
   const router = createBrowserRouter([
@@ -46,6 +47,14 @@ function App() {
           element: (
             <PrivateRoute>
               <Hidden></Hidden>
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: "/varified",
+          element: (
+            <PrivateRoute>
+              <Varified></Varified>
             </PrivateRoute>
           ),
         },

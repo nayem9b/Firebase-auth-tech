@@ -1,11 +1,10 @@
-import React from "react";
+import userEvent from "@testing-library/user-event";
+import React, { useContext } from "react";
+import { AuthContext } from "./Contexts/UserContext";
 
 const Profile = () => {
-  return (
-    <div>
-      <h1>This is profile</h1>
-    </div>
-  );
+  const { user } = useContext(AuthContext);
+  return <h1>This is my profile</h1>;
 };
 
 export default Profile;

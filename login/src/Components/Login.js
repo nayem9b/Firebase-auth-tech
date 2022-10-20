@@ -1,12 +1,14 @@
 import React, { useContext } from "react";
 import GoogleButton from "react-google-button";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { AuthContext } from "./Contexts/UserContext";
+import Modal from "./Modal";
 // import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { signInWithGoogle, fbSignIn } = useContext(AuthContext);
+  const { signInWithGoogle, fbSignIn, signIn } = useContext(AuthContext);
   const handleGoogleSignIn = () => {
     signInWithGoogle()
       .then((result) => {
@@ -21,6 +23,18 @@ const Login = () => {
     const form = event.target;
     const email = form.email.value;
     const password = form.password.value;
+    const emailCheck = /\S+@\S+\.\S+/.test(form.target.value);
+    if (!emailCheck) {
+      console.log("Cheak your email please");
+    }
+    signIn(email, password)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        navigate("/");
+      })
+      .catch((error) => console.error(error));
+    form.reset();
   };
 
   return (
@@ -42,12 +56,15 @@ const Login = () => {
                   <label className='label'>
                     <span className='label-text'>Email</span>
                   </label>
-                  <input
-                    type='email'
-                    placeholder='email'
-                    className='input input-bordered'
-                    name='email'
-                  />
+                  <div className='indicator'>
+                    <span className='indicator-item badge'>Required</span>
+                    <input
+                      type='email'
+                      placeholder='email'
+                      className='input input-bordered max-h-max'
+                      name='email'
+                    />
+                  </div>
                 </div>
                 <div className='form-control'>
                   <label className='label'>
@@ -61,12 +78,16 @@ const Login = () => {
                   />
                 </div>
                 <label className='label'>
-                  <a href='#' className='label-text-alt link link-hover'>
-                    Forgot password?
-                  </a>
+                  <Modal></Modal>
                 </label>
-                <div className='form-control mt-6'>
-                  <button className='btn btn-primary'>Login</button>
+                <div className=''>
+                  <button class='group relative inline-block focus:outline-none focus:ring'>
+                    <span class='absolute inset-0 translate-x-1.5 translate-y-1.5 bg-yellow-300 transition-transform group-hover:translate-y-0 group-hover:translate-x-0'></span>
+
+                    <span class='relative inline-block border-2 border-current px-8 py-3 text-sm font-bold uppercase tracking-widest text-black group-active:text-opacity-75'>
+                      Log In
+                    </span>
+                  </button>
                 </div>
               </form>
 
@@ -103,7 +124,9 @@ const Login = () => {
                       clip-rule='evenodd'></path>
                   </svg>
                 </a>
-                <GoogleButton onClick={handleGoogleSignIn}></GoogleButton>
+                <GoogleButton
+                  className='flex mx-auto ml-10'
+                  onClick={handleGoogleSignIn}></GoogleButton>
               </div>
             </div>
           </div>

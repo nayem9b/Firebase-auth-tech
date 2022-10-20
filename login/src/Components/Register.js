@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import GoogleButton from "react-google-button";
 import { AuthContext } from "./Contexts/UserContext";
 import { toast } from "react-toastify";
@@ -6,13 +6,10 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();
-  const handleEmail = (e) => {
-    const test = /\S+@\S+\.\S+/.test(e.target.value);
-    if (!test) {
-      toast.success("Login Success!");
-    }
-  };
-  const { signInWithGoogle, createUser, fbSignIn } = useContext(AuthContext);
+  const [error, setError] = useState("");
+
+  const { signInWithGoogle, createUser, fbSignIn, verifyEmail } =
+    useContext(AuthContext);
 
   const handleGoogleSignIn = () => {
     signInWithGoogle()
@@ -41,9 +38,21 @@ const Register = () => {
         const user = result.user;
         console.log(user);
         form.reset();
-        navigate("/profile");
+        navigate("/home");
+        verifyEmail().then(() => {
+          console.log("email varification sent");
+        });
       })
       .catch((error) => console.error(error));
+    form.reset();
+
+    // verifyEmail()
+    //   .then(() => {
+    //     console.log("email varification sent");
+    //   })
+    //   .catch((error) => {
+    //     toast.error(error.message);
+    //   });
   };
   return (
     <div>
@@ -71,7 +80,7 @@ const Register = () => {
                     name='user'
                   />
                 </div>
-                <div onBlur={handleEmail} className='form-control'>
+                <div className='form-control'>
                   <label className='label'>
                     <span className='label-text'>Email</span>
                   </label>
