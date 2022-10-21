@@ -7,13 +7,15 @@ import { Switch } from "@headlessui/react";
 import toast, { Toaster } from "react-hot-toast";
 
 const Register = () => {
+  const { signInWithGoogle, createUser, fbSignIn, verifyEmail } =
+    useContext(AuthContext);
   const notify = () => toast("Here is your toast.");
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [enabled, setEnabled] = useState(false);
-
-  const { signInWithGoogle, createUser, fbSignIn, verifyEmail } =
-    useContext(AuthContext);
+  const [cofirmPassword, setConfirmPassword] = useState("");
+  const [finalPassword, setFinalPassword] = useState(null);
+  const [errorEmail, setErrorEmail] = useState("");
 
   const handleGoogleSignIn = () => {
     signInWithGoogle()
@@ -31,24 +33,44 @@ const Register = () => {
       })
       .catch((error) => console.error(error));
   };
+
+  // const handleConfirm = (event) => {
+  //   const form = event.target;
+  //   console.log(form);
+  //   const password = form.password.value;
+  //   const confirm = form.confirm.value;
+  //   if (password !== confirm) {
+  //     console.log("password didnt match");
+  //   }
+  // };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = event.target;
     const email = form.email.value;
     const password = form.password.value;
+    const confirm = form.confirm.value;
 
-    createUser(email, password)
-      .then((result) => {
-        const user = result.user;
-        console.log(user);
-        form.reset();
-        navigate("/home");
-        verifyEmail().then(() => {
-          console.log("email varification sent");
-        });
-      })
-      .catch((error) => console.error(error));
-    form.reset();
+    if (password === confirm) {
+      toast.success("Verification email has been sent to your email address");
+      createUser(email, password)
+        .then((result) => {
+          const user = result.user;
+
+          console.log(user);
+          form.reset();
+          navigate("/home");
+          verifyEmail().then(() => {
+            console.log("email varification sent");
+          });
+        })
+        .catch((error) => console.error(error));
+      form.reset();
+    }
+
+    if (password !== confirm) {
+      toast.error("Password didn't match");
+    }
 
     // verifyEmail()
     //   .then(() => {
@@ -57,6 +79,44 @@ const Register = () => {
     //   .catch((error) => {
     //     toast.error(error.message);
     //   });
+  };
+  const handleEmailCheck = (event) => {
+    console.log(event.target.value);
+    const emailCheck = /\S+@\S+\.\S+/.test(event.target.value);
+
+    if (!emailCheck) {
+      setErrorEmail("Cheack your email please");
+      console.log(errorEmail);
+    }
+  };
+  const handlePassword = (e) => {
+    setFinalPassword(e.target.value);
+    console.log(finalPassword);
+    if (!/(?=.{8,})/.test(e.target.value)) {
+      setError("password must be 8 character");
+      setFinalPassword(e.target.value);
+      return console.log(error, finalPassword);
+    }
+    if (!/(?=.*[A-Z])/.test(e.target.value)) {
+      setError("password should have Upper letter!!");
+      setFinalPassword(e.target.value);
+      return console.log(error, finalPassword);
+    }
+    if (!/(?=.*[!#@$%&? "])/.test(e.target.value)) {
+      setError("password should have special character!!");
+      setFinalPassword(e.target.value);
+      return console.log(error, finalPassword);
+    } else {
+      setError("Password is strong");
+    }
+  };
+  const handleCheckBothPassword = (e) => {
+    if (e.target.value === finalPassword) {
+      setConfirmPassword("Password Matched");
+      console.log(cofirmPassword);
+    } else {
+      setConfirmPassword("Password didn't match");
+    }
   };
   return (
     <div>
@@ -85,19 +145,22 @@ const Register = () => {
                     required
                   />
                 </div>
-                <div className='form-control'>
+                <div onChange={handleEmailCheck} className='form-control'>
                   <label className='label'>
                     <span className='label-text'>Email</span>
-                  </label>
+                  </label>{" "}
                   <input
                     type='email'
                     placeholder='email'
-                    className='input input-bordered'
+                    className='input input-bordered max-h-max'
                     name='email'
-                    required
                   />
                 </div>
-                <div className='form-control'>
+                <div
+                  className='tooltip tooltip-open tooltip-bottom tooltip-error'
+                  data-tip={errorEmail}></div>
+
+                <div onChange={handlePassword} className='form-control'>
                   <label className='label'>
                     <span className='label-text'>Password</span>
                   </label>
@@ -109,7 +172,60 @@ const Register = () => {
                     required
                   />
                 </div>
-                <div className='flex'>
+                <div className='mt-[-25px]'>
+                  {error === "Password is strong" ? (
+                    <>
+                      {" "}
+                      <div
+                        className=' tooltip tooltip-open tooltip-success tooltip-bottom'
+                        data-tip={error}></div>{" "}
+                    </>
+                  ) : (
+                    <div
+                      className='tooltip tooltip-open tooltip-bottom tooltip-error'
+                      data-tip={error}></div>
+                  )}
+                </div>
+
+                {/* <div
+                  className='tooltip tooltip-open tooltip-bottom'
+                  data-tip={error}></div> */}
+
+                <div
+                  onChange={handleCheckBothPassword}
+                  className='form-control mt-5'>
+                  <label className='label'>
+                    <span className='label-text'>Confirm Password</span>
+                  </label>
+                  <input
+                    type='password'
+                    placeholder='Confirm Password'
+                    className='input input-bordered'
+                    name='confirm'
+                    required
+                  />
+                </div>
+
+                <div className=''>
+                  {cofirmPassword === "Password Matched" ? (
+                    <>
+                      <div
+                        className=' mt-[-15px] mb-7 tooltip tooltip-open tooltip-bottom tooltip-success'
+                        data-tip={cofirmPassword}></div>
+                    </>
+                  ) : (
+                    <>
+                      <div
+                        className='mt-[-15px] mb-7 tooltip tooltip-open tooltip-bottom tooltip-error'
+                        data-tip={cofirmPassword}></div>
+                    </>
+                  )}
+                </div>
+
+                {/* <div
+                  className='tooltip tooltip-open tooltip-bottom tooltip-success'
+                  data-tip={cofirmPassword}></div> */}
+                <div className='mt-4 flex'>
                   <Switch
                     checked={enabled}
                     onChange={setEnabled}
@@ -125,10 +241,7 @@ const Register = () => {
                   <h1>Accept terms and policy</h1>
                 </div>
                 <div className='form-control mt-3'>
-                  <button
-                    onClick={notify}
-                    className='btn btn-primary '
-                    disabled={!enabled}>
+                  <button className='btn btn-primary ' disabled={!enabled}>
                     Register
                   </button>
                   <Toaster />
