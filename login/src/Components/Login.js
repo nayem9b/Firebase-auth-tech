@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import GoogleButton from "react-google-button";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "./Contexts/UserContext";
 import Modal from "./Modal";
@@ -8,33 +8,42 @@ import Modal from "./Modal";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+  const [error, setError] = useState("");
   const { signInWithGoogle, fbSignIn, signIn } = useContext(AuthContext);
   const handleGoogleSignIn = () => {
     signInWithGoogle()
       .then((result) => {
         const user = result.user;
         console.log(user);
-        navigate("/");
+        navigate(from, { replace: true });
       })
       .catch((error) => console.error(error));
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = event.target;
     const email = form.email.value;
     const password = form.password.value;
-    const emailCheck = /\S+@\S+\.\S+/.test(form.target.value);
-    if (!emailCheck) {
-      console.log("Cheak your email please");
-    }
+
     signIn(email, password)
       .then((result) => {
         const user = result.user;
         console.log(user);
-        navigate("/");
+        navigate("/profile");
       })
       .catch((error) => console.error(error));
     form.reset();
+  };
+
+  const handleEmailCheck = (event) => {
+    const emailCheck = /\S+@\S+\.\S+/.test(event.target.value);
+    if (!emailCheck) {
+      setError("Cheack your email please");
+      console.log(error);
+    }
   };
 
   return (
@@ -52,12 +61,12 @@ const Login = () => {
           <div className='card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100'>
             <div className='card-body'>
               <form onSubmit={handleSubmit}>
-                <div className='form-control'>
+                <div onChange={handleEmailCheck} className='form-control'>
                   <label className='label'>
                     <span className='label-text'>Email</span>
                   </label>
                   <div className='indicator'>
-                    <span className='indicator-item badge'>Required</span>
+                    <span className='indicator-item badge'>{error}</span>
                     <input
                       type='email'
                       placeholder='email'

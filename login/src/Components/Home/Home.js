@@ -3,23 +3,34 @@ import React from "react";
 const Home = () => {
   return (
     <div>
-      <div className='hero min-h-screen bg-base-200'>
-        <div className='hero-content flex-col lg:flex-row'>
-          <img
-            src='https://placeimg.com/260/400/arch'
-            className='max-w-sm rounded-lg shadow-2xl'
-          />
-          <div>
-            <h1 className='text-5xl font-bold'>Box Office News!</h1>
-            <p className='py-6'>
-              Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-              excepturi exercitationem quasi. In deleniti eaque aut repudiandae
-              et a id nisi.
+      <article itemid='#' itemscope itemtype='http://schema.org/BlogPosting'>
+        <div class='grid items-center grid-cols-1 md:grid-cols-2'>
+          <div class='order-2 h-64 md:order-1 md:h-full'>
+            <img
+              src='https://tailwindcss.com/_next/static/media/tailwindui-small@75.8bb955b2.jpg'
+              class='object-cover w-full h-full bg-center'
+              alt='Kutty'
+            />
+          </div>
+          <div class='order-1 w-full px-4 py-12 mx-auto text-left md:w-3/4 md:py-48 md:order-2 md:px-0'>
+            <p class='mb-3 text-gray-500'>
+              <time
+                itemprop='datePublished dateModified'
+                datetime='2010-08-07 11:11:03-0400'
+                pubdate>
+                Jan 02 2021
+              </time>
             </p>
-            <button className='btn btn-primary'>Get Started</button>
+            <h1
+              class='mb-5 text-3xl font-bold text-gray-900 md:leading-tight md:text-4xl'
+              itemprop='headline'
+              title='Rise of Tailwind - A Utility First CSS Framework'>
+              Rise of Tailwind - A Utility First CSS Framework
+            </h1>
+            <a class='flex items-center text-gray-700' href='#'></a>
           </div>
         </div>
-      </div>
+      </article>
     </div>
   );
 };

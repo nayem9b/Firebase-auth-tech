@@ -10,6 +10,7 @@ import Hidden from "./Components/Hidden";
 import PrivateRoute from "./Components/PrivateRoute";
 import Profile from "./Components/Profile";
 import Varified from "./Components/Varified";
+import ErrorPage from "./Components/ErrorPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -57,6 +58,10 @@ function App() {
               <Varified></Varified>
             </PrivateRoute>
           ),
+        },
+        {
+          path: "*",
+          element: <ErrorPage></ErrorPage>,
         },
       ],
     },

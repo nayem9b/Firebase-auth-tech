@@ -1,12 +1,16 @@
 import React, { useContext, useState } from "react";
 import GoogleButton from "react-google-button";
 import { AuthContext } from "./Contexts/UserContext";
-import { toast } from "react-toastify";
+
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Switch } from "@headlessui/react";
+import toast, { Toaster } from "react-hot-toast";
 
 const Register = () => {
+  const notify = () => toast("Here is your toast.");
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [enabled, setEnabled] = useState(false);
 
   const { signInWithGoogle, createUser, fbSignIn, verifyEmail } =
     useContext(AuthContext);
@@ -78,6 +82,7 @@ const Register = () => {
                     placeholder='username'
                     className='input input-bordered'
                     name='user'
+                    required
                   />
                 </div>
                 <div className='form-control'>
@@ -89,6 +94,7 @@ const Register = () => {
                     placeholder='email'
                     className='input input-bordered'
                     name='email'
+                    required
                   />
                 </div>
                 <div className='form-control'>
@@ -100,15 +106,32 @@ const Register = () => {
                     placeholder='password'
                     className='input input-bordered'
                     name='password'
+                    required
                   />
                 </div>
-                <label className='label'>
-                  <a href='#' className='label-text-alt link link-hover'>
-                    Forgot password?
-                  </a>
-                </label>
-                <div className='form-control mt-6'>
-                  <button className='btn btn-primary'>Register</button>
+                <div className='flex'>
+                  <Switch
+                    checked={enabled}
+                    onChange={setEnabled}
+                    className={`${enabled ? "bg-green-400" : "bg-red-400"}
+          relative inline-flex h-[18px] w-[64px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}>
+                    <span className='sr-only'>Use setting</span>
+                    <span
+                      aria-hidden='true'
+                      className={`${enabled ? "translate-x-9" : "translate-x-0"}
+            pointer-events-none inline-block h-[14px] w-[24px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                    />
+                  </Switch>
+                  <h1>Accept terms and policy</h1>
+                </div>
+                <div className='form-control mt-3'>
+                  <button
+                    onClick={notify}
+                    className='btn btn-primary '
+                    disabled={!enabled}>
+                    Register
+                  </button>
+                  <Toaster />
                 </div>
               </form>
 
@@ -132,7 +155,8 @@ const Register = () => {
                   class='inline-flex items-center rounded border-2 border-[#171515] bg-[#171515] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent hover:text-[#171515] focus:outline-none focus:ring active:opacity-75'
                   href='/github'
                   target='_blank'
-                  rel='noreferrer'>
+                  rel='noreferrer'
+                  disabled={!enabled}>
                   GitHub
                   <svg
                     class='ml-2 h-5 w-5'
