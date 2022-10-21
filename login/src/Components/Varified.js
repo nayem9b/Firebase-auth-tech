@@ -23,7 +23,7 @@ const Varified = () => {
             </h2>
             <p class='mb-2 text-lg text-zinc-500'>
               You need to varify your email address to view this page <br />
-              Cheack your mail folder. Don't forget to check the spam folder too{" "}
+              Check your mail folder. Don't forget to check the spam folder too{" "}
               <span class='font-medium text-indigo-500'>{user.email}</span>.
             </p>
             <a

@@ -4,20 +4,22 @@ import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "./Contexts/UserContext";
 import Modal from "./Modal";
-// import "./Login.css";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [errorEmail, setErrorEmail] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
-  const [error, setError] = useState("");
-  const { signInWithGoogle, fbSignIn, signIn } = useContext(AuthContext);
+  // const from = location.state?.from?.pathname || "/";
+  const [fire, setFire] = useState("");
+  const { signInWithGoogle, fbSignIn, signIn, githubSignin } =
+    useContext(AuthContext);
   const handleGoogleSignIn = () => {
     signInWithGoogle()
       .then((result) => {
         const user = result.user;
         console.log(user);
-        navigate(from, { replace: true });
+        navigate("/profile");
       })
       .catch((error) => console.error(error));
   };
@@ -28,22 +30,45 @@ const Login = () => {
     const email = form.email.value;
     const password = form.password.value;
 
-    signIn(email, password)
-      .then((result) => {
-        const user = result.user;
-        console.log(user);
-        navigate("/profile");
-      })
-      .catch((error) => console.error(error));
-    form.reset();
+    if (errorEmail) {
+      signIn(email, password)
+        .then((result) => {
+          const user = result.user;
+          console.log(user);
+          navigate("/profile");
+        })
+        .catch((error) => console.log(error));
+      form.reset();
+      setErrorEmail("");
+    }
   };
 
   const handleEmailCheck = (event) => {
-    const emailCheck = /\S+@\S+\.\S+/.test(event.target.value);
-    if (!emailCheck) {
-      setError("Cheack your email please");
-      console.log(error);
+    setEmail(event.target.value);
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setErrorEmail("Cheack your email please");
+    } else {
+      setErrorEmail("Email is alright");
     }
+  };
+
+  const handleFbLogin = () => {
+    fbSignIn()
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+      })
+      .catch((error) => console.error(error));
+  };
+
+  const handleGithubLogin = () => {
+    githubSignin()
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+      })
+      .catch((error) => console.error(error));
   };
 
   return (
@@ -72,6 +97,19 @@ const Login = () => {
                     name='email'
                   />
                 </div>
+                <div className='mt-[-25px]'>
+                  {errorEmail === "Email is alright" ? (
+                    <>
+                      <div
+                        className='tooltip tooltip-open tooltip-bottom tooltip-success'
+                        data-tip={errorEmail}></div>
+                    </>
+                  ) : (
+                    <div
+                      className='tooltip tooltip-open tooltip-bottom tooltip-error'
+                      data-tip={errorEmail}></div>
+                  )}
+                </div>
                 <div className='form-control'>
                   <label className='label'>
                     <span className='label-text'>Password</span>
@@ -99,8 +137,8 @@ const Login = () => {
 
               <div className='grid grid-cols-2 gap-y-3 gap-x-4'>
                 <a
+                  onClick={handleFbLogin}
                   class='inline-flex items-center rounded border-2 border-[#3b5998] bg-[#3b5998] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent hover:text-[#3b5998] focus:outline-none focus:ring active:opacity-75'
-                  href='/facebook'
                   target='_blank'
                   rel='noreferrer'>
                   Facebook
@@ -114,10 +152,10 @@ const Login = () => {
                   </svg>
                 </a>
                 <a
+                  onClick={handleGithubLogin}
                   class='inline-flex items-center rounded border-2 border-[#171515] bg-[#171515] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent hover:text-[#171515] focus:outline-none focus:ring active:opacity-75'
-                  href='/github'
-                  target='_blank'
-                  rel='noreferrer'>
+                  rel='noreferrer'
+                  target='_blank'>
                   GitHub
                   <svg
                     class='ml-2 h-5 w-5'

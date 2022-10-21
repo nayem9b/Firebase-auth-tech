@@ -20,9 +20,11 @@ const Register = () => {
   const [error, setError] = useState("");
   const [enabled, setEnabled] = useState(false);
   const [email, setEmail] = useState("");
+  const [errorEmail, setErrorEmail] = useState("");
   const [cofirmPassword, setConfirmPassword] = useState("");
   const [finalPassword, setFinalPassword] = useState(null);
-  const [errorEmail, setErrorEmail] = useState("");
+
+  const [riyad, setRiyad] = useState("");
 
   const handleGoogleSignIn = () => {
     signInWithGoogle()
@@ -41,11 +43,11 @@ const Register = () => {
       .catch((error) => console.error(error));
   };
 
-  useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     navigate("/");
+  //   }
+  // }, [user]);
   // const handleConfirm = (event) => {
   //   const form = event.target;
   //   console.log(form);
@@ -55,11 +57,20 @@ const Register = () => {
   //     console.log("password didnt match");
   //   }
   // };
+  const handleEmailCheck = (event) => {
+    setEmail(event.target.value);
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setErrorEmail("Cheack your email please");
+    } else {
+      setErrorEmail("Email is alright");
+    }
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = event.target;
-
+    const email = form.email.value;
     const password = form.password.value;
     const confirm = form.confirm.value;
 
@@ -68,21 +79,20 @@ const Register = () => {
       createUser(email, password)
         .then((result) => {
           const user = result.user;
-          console.log(email);
-          console.log(user);
+
           form.reset();
-          navigate("/home");
-          verifyEmail().then(() => {
-            console.log("email varification sent");
-          });
+          setError("");
+          setErrorEmail("");
+          navigate("/profile");
+          verifyEmail().then(() => {});
         })
         .catch((error) => console.error(error));
       form.reset();
     }
 
-    if (password !== confirm) {
-      toast.error("Password didn't match");
-    }
+    // if (password !== confirm) {
+    //   toast.error("Password didn't match");
+    // }
 
     // verifyEmail()
     //   .then(() => {
@@ -92,31 +102,24 @@ const Register = () => {
     //     toast.error(error.message);
     //   });
   };
-  const handleEmailCheck = (event) => {
-    setEmail(event.target.value);
-    const emailCheck = /\S+@\S+\.\S+/.test(event.target.value);
 
-    if (!emailCheck) {
-      setErrorEmail("Cheack your email please");
-    }
-  };
   const handlePassword = (e) => {
     setFinalPassword(e.target.value);
-    console.log(finalPassword);
+
     if (!/(?=.{8,})/.test(e.target.value)) {
-      setError("password must be 8 character");
+      setError("password must be 8 characters long");
       setFinalPassword(e.target.value);
-      return console.log(error, finalPassword);
+      return;
     }
     if (!/(?=.*[A-Z])/.test(e.target.value)) {
-      setError("password should have Upper letter!!");
+      setError("password should have an uppercase letter!!");
       setFinalPassword(e.target.value);
-      return console.log(error, finalPassword);
+      return;
     }
     if (!/(?=.*[!#@$%&? "])/.test(e.target.value)) {
-      setError("password should have special character!!");
+      setError("password should have an special character!!");
       setFinalPassword(e.target.value);
-      return console.log(error, finalPassword);
+      return;
     } else {
       setError("Password is strong");
     }
@@ -124,7 +127,6 @@ const Register = () => {
   const handleCheckBothPassword = (e) => {
     if (e.target.value === finalPassword) {
       setConfirmPassword("Password Matched");
-      console.log(cofirmPassword);
     } else {
       setConfirmPassword("Password didn't match");
     }
@@ -165,7 +167,8 @@ const Register = () => {
                     required
                   />
                 </div>
-                <div onChange={handleEmailCheck} className='form-control'>
+
+                <div onKeyUp={handleEmailCheck} className='form-control'>
                   <label className='label'>
                     <span className='label-text'>Email</span>
                   </label>{" "}
@@ -176,10 +179,24 @@ const Register = () => {
                     name='email'
                   />
                 </div>
-                {}
-                <div
+
+                <div className='mt-[-25px]'>
+                  {errorEmail === "Email is alright" ? (
+                    <>
+                      <div
+                        className='tooltip tooltip-open tooltip-bottom tooltip-success'
+                        data-tip={errorEmail}></div>
+                    </>
+                  ) : (
+                    <div
+                      className='tooltip tooltip-open tooltip-bottom tooltip-error'
+                      data-tip={errorEmail}></div>
+                  )}
+                </div>
+
+                {/* <div
                   className='tooltip tooltip-open tooltip-bottom tooltip-error'
-                  data-tip={errorEmail}></div>
+                  data-tip={errorEmail}></div> */}
 
                 <div onChange={handlePassword} className='form-control'>
                   <label className='label'>
