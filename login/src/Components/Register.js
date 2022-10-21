@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import GoogleButton from "react-google-button";
 import { AuthContext } from "./Contexts/UserContext";
 
@@ -7,12 +7,19 @@ import { Switch } from "@headlessui/react";
 import toast, { Toaster } from "react-hot-toast";
 
 const Register = () => {
-  const { signInWithGoogle, createUser, fbSignIn, verifyEmail } =
-    useContext(AuthContext);
+  const {
+    signInWithGoogle,
+    createUser,
+    fbSignIn,
+    verifyEmail,
+    githubSignin,
+    user,
+  } = useContext(AuthContext);
   const notify = () => toast("Here is your toast.");
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [enabled, setEnabled] = useState(false);
+  const [email, setEmail] = useState("");
   const [cofirmPassword, setConfirmPassword] = useState("");
   const [finalPassword, setFinalPassword] = useState(null);
   const [errorEmail, setErrorEmail] = useState("");
@@ -34,6 +41,11 @@ const Register = () => {
       .catch((error) => console.error(error));
   };
 
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user]);
   // const handleConfirm = (event) => {
   //   const form = event.target;
   //   console.log(form);
@@ -47,7 +59,7 @@ const Register = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = event.target;
-    const email = form.email.value;
+
     const password = form.password.value;
     const confirm = form.confirm.value;
 
@@ -56,7 +68,7 @@ const Register = () => {
       createUser(email, password)
         .then((result) => {
           const user = result.user;
-
+          console.log(email);
           console.log(user);
           form.reset();
           navigate("/home");
@@ -81,12 +93,11 @@ const Register = () => {
     //   });
   };
   const handleEmailCheck = (event) => {
-    console.log(event.target.value);
+    setEmail(event.target.value);
     const emailCheck = /\S+@\S+\.\S+/.test(event.target.value);
 
     if (!emailCheck) {
       setErrorEmail("Cheack your email please");
-      console.log(errorEmail);
     }
   };
   const handlePassword = (e) => {
@@ -117,6 +128,15 @@ const Register = () => {
     } else {
       setConfirmPassword("Password didn't match");
     }
+  };
+
+  const handleGithubLogin = () => {
+    githubSignin()
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+      })
+      .catch((error) => console.error(error));
   };
   return (
     <div>
@@ -156,6 +176,7 @@ const Register = () => {
                     name='email'
                   />
                 </div>
+                {}
                 <div
                   className='tooltip tooltip-open tooltip-bottom tooltip-error'
                   data-tip={errorEmail}></div>
@@ -265,11 +286,10 @@ const Register = () => {
                   </svg>
                 </a>
                 <a
+                  onClick={handleGithubLogin}
                   class='inline-flex items-center rounded border-2 border-[#171515] bg-[#171515] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-transparent hover:text-[#171515] focus:outline-none focus:ring active:opacity-75'
-                  href='/github'
-                  target='_blank'
                   rel='noreferrer'
-                  disabled={!enabled}>
+                  target='_blank'>
                   GitHub
                   <svg
                     class='ml-2 h-5 w-5'

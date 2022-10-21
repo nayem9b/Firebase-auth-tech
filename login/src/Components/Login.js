@@ -65,15 +65,12 @@ const Login = () => {
                   <label className='label'>
                     <span className='label-text'>Email</span>
                   </label>
-                  <div className='indicator'>
-                    <span className='indicator-item badge'>{error}</span>
-                    <input
-                      type='email'
-                      placeholder='email'
-                      className='input input-bordered max-h-max'
-                      name='email'
-                    />
-                  </div>
+                  <input
+                    type='email'
+                    placeholder='email'
+                    className='input input-bordered max-h-max'
+                    name='email'
+                  />
                 </div>
                 <div className='form-control'>
                   <label className='label'>

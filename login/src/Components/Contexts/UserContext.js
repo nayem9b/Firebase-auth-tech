@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   FacebookAuthProvider,
   getAuth,
+  GithubAuthProvider,
   GoogleAuthProvider,
   onAuthStateChanged,
   sendEmailVerification,
@@ -18,7 +19,7 @@ const auth = getAuth(app);
 
 const UserContext = ({ children }) => {
   const [user, setUser] = useState({});
-
+  const githubProvider = new GithubAuthProvider();
   const googleProvider = new GoogleAuthProvider();
   const fbProvider = new FacebookAuthProvider();
 
@@ -47,6 +48,11 @@ const UserContext = ({ children }) => {
     return sendEmailVerification(auth.currentUser);
   };
 
+  //Github SignIn
+  const githubSignin = () => {
+    return signInWithPopup(auth, githubProvider);
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -69,6 +75,7 @@ const UserContext = ({ children }) => {
     fbSignIn,
     signIn,
     verifyEmail,
+    githubSignin,
   };
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
