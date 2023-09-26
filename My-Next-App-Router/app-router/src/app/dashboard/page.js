@@ -1,10 +1,9 @@
-// "use client";
+import React from "react";
 
 const page = () => {
-  // console.log("from me");
   return (
     <div>
-      <h1>This is homepage</h1>
+      <h1>This is dashboard page</h1>
     </div>
   );
 };
